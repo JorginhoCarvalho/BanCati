@@ -60,12 +60,12 @@ class Administrador():
     
     def Set_Cati_coins(self, Id_func):
             c = int(input("Quantos cati coins? "))
-            cursor.execute('''Update TesteBancati set Cati_coins = ? where ID = ? ''',[c,Id_func])
+            cursor.execute('''Update TesteBancati set Cati_coins = Cati_coins + ? where ID = ? ''',[c,Id_func])
             conn.commit() 
     
     def Unset_Cati_coins(self, Id_func):
-            c = -(int(input("Quantos cati coins? ")))
-            cursor.execute('''Update TesteBancati set Cati_coins = ? where ID = ? ''',[c,Id_func])
+            c = int(input("Quantos cati coins? "))
+            cursor.execute('''Update TesteBancati set Cati_coins = Cati_coins - ? where ID = ? ''',[c,Id_func])
             conn.commit() 
    
     def Cadastrar_Advertencia(self, Tipo, Data, Ponto, Justificativa):
