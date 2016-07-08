@@ -12,10 +12,15 @@ Created on Wed Jul  6 10:19:57 2016
 @author: Jorge e Atletica
 """
 
-cursor.execute('''Drop table TesteBancati''')
-cursor.execute('''create table TesteBancati( Nome text, Cargo text, Cati_coins integer, Login text, Senha text, ID integer)''')
+"""cursor.execute('''Drop table if exists TesteBancati ''')
+cursor.execute('''Drop table if exists Advertencia ''')
+cursor.execute('''Drop table if exists Recompensa ''')"""
+cursor.execute('''create table if not exists TesteBancati( Nome text, Cargo text, Cati_coins integer, Login text, Senha text, ID integer)''')
+cursor.execute('''create table if not exists Advertencia( Tipo text, Data text, Ponto integer, Justificativa text, ID_Func integer)''')
+cursor.execute('''create table if not exists Recompensa( Coins integer, Data text, Observacao text, ID_Func integer)''')
 
-class Pessoa:
+class Pessoa:    
+    
     def __init__(self, Nome, Cargo, Cati_coins, Login, Senha, ID):
         self.Cati_coins = Cati_coins
         self.Cargo = Cargo
@@ -27,12 +32,10 @@ class Pessoa:
     def Exibir_Coins(self):
         cursor.execute('''Select Cati_coins from TesteBancati where ID = ?''', [self.ID])
         resultado = cursor.fetchone()
-        print(resultado)        
-        #Coins_total = resultado
-        while resultado != None:
-            print(resultado)
-            resultado = cursor.fetchone()
-            #Coins_total = resultado + Coins_total
+        print(resultado)                    
+    
+    def Get_Id(self):
+        return self.ID
     
     def set_Login_Senha(self):
         Login = input("Login:")
@@ -56,52 +59,40 @@ class Administrador():
                        [Nome, Cargo, Cati_coins, Login, Senha, ID])
     
     def Set_Cati_coins(self, Id_func):
-            c = int(input("Quantos cati coins?"))
+            c = int(input("Quantos cati coins? "))
             cursor.execute('''Update TesteBancati set Cati_coins = ? where ID = ? ''',[c,Id_func])
             conn.commit() 
     
     def Unset_Cati_coins(self, Id_func):
-            c = int(input("Quantos cati coins?"))
+            c = -(int(input("Quantos cati coins? ")))
             cursor.execute('''Update TesteBancati set Cati_coins = ? where ID = ? ''',[c,Id_func])
             conn.commit() 
    
+    def Cadastrar_Advertencia(self, Tipo, Data, Ponto, Justificativa):
+            '''Soh instanciei essa classe para mostrar que o import esta dando certo'''
+            fodeu = Advertencia(Tipo, Data, Ponto, Justificativa)
+            cursor.execute(''' insert into Advertencia values(?,?,?,?,?)''',[Tipo, Data, Ponto, Justificativa, Id_func])
+    
+    def Cadastrar_Recompensa(self, Coins, Data, Observacao, Id_func):
+            '''Soh instanciei essa classe para mostrar que o import esta dando certo'''
+            boa = Recompensa(Ponto, Data, Observacao, Id_func)            
+            cursor.execute(''' insert into Recompensa values(?,?,?,?,?)''',[Coins, Data, Observacao, Id_func])    
+    
     def Reset_all(self):
             cursor.execute(''' Delete * from TesteBancati''')
-
-#class Janela:
- #   def __init__(self, toplevel):
-   #     self.fr1 = Frame(toplevel)
-    #    self.fr1.pack()
-        
-     #   self.login = Label(self.fr1, text='Login:') 
-      #  self.login.pack(side = LEFT) 
-        
-       # self.login_entry = Entry(self.fr1, bd = 5)
-        #self.login_entry.pack(side = RIGHT)
-        
-        #self.senha = Label(self.fr1, text='Senha:') 
-        #self.senha.pack(side = DOWN) 
-        
-       # self.senha_entry = Entry(self.fr1, bd = 5)
-       # self.senha_entry.pack(side = DOWN)
-        
-#raiz = Tk()
-    
-#raiz.title("Bancati")
-#raiz.geometry("400x300")'''
-
-
+            cursor.execute(''' Delete * from Advertencia''')
+            cursor.execute(''' Delete * from Recompensa''')
 
 Iago = Administrador()
-jorge = Pessoa('Jorge', 'Puto', 10, 'Jorge123', 'jorge123', 1234)
+jorge = Pessoa('Jorge', 'Maneh', 10, 'Jorge123', '123Jorge', 1234)
 lucas = Funcionario('Lucas', 'Projetista', 15, 'lucas123', '123Lucas', 5431)
 
 Iago.Cadastro('Marcelo', 'Desenvolvedor', 0 , 'Marcelo123', '123Marcelo', 9876)
 Iago.Cadastro('Jorge', 'Puto', 10 , 'Jorge123', 'jorge123', 1234)
-jorge.Exibir_Coins()
-jorge.set_Login_Senha()
 
-cursor.execute(''' Select * from TesteBancati''')
+Iago.Set_Cati_coins(jorge.Get_Id())
+
+cursor.execute(''' Select Distinct * from TesteBancati''')
 resultado = cursor.fetchone()
 while resultado != None:
     print(resultado)
@@ -111,7 +102,4 @@ cursor.close()
 conn.commit()
 conn.close()
 
-#Janela(raiz)
-#raiz.mainloop()     
-    
 
